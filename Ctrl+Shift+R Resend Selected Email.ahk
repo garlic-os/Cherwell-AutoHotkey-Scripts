@@ -2,7 +2,6 @@
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 #Warn  ; Enable warnings to assist with detecting common errors.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
-SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 CoordMode, Mouse, Client  ; Recommended for consistency between OSes and themes.
 #UseHook
 SetDefaultMouseSpeed, 0
@@ -10,10 +9,14 @@ SetDefaultMouseSpeed, 0
 SENTINEL_TEXT_START := "We have a question or update regarding the above Incident:"
 SENTINEL_TEXT_END := "If you have questions, you may contact us by phone at"
 
+Hotkey, IfWinActive, ahk_exe Trebuchet.App.exe
+Hotkey, ^+r, ResendSelectedEmail
+Return
+
 
 ; Ctrl + Shift + R  |  Resend selected email
 ; Click the note containing the email you want to resend, then press this hotkey.
-^+r::
+ResendSelectedEmail::
 	; Save current clipboard state (this script modifies the clipboard).
 	clipboard_previous_state := ClipboardAll
 	
