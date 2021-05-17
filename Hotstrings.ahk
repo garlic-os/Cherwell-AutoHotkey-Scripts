@@ -19,16 +19,14 @@ SendMode Input  ; Recommended for new scripts due to its superior speed and reli
 ::@#mfa::We have gone ahead and reset the Multi-Factor Authentication on your account. Now if you would please go to https://portal.office.com/, you will be able to set it back up and see if
 ::@#mfapost::Reset the customer's MFA and directed them to portal.office.com to set it back up.
 
-::@#vdi::To access [PROUDCT], you will need to install and run the campus VDI, then inside of the VDI, run the software on AppsAnywhere.`nFor information on what the VDI is and how to use it, please read its IT Services page here: https://it.mst.edu/services/vdi/
+::@#vdi::To access [PRODUCT], you will need to install and run the campus VDI, then inside of the VDI, run the software on AppsAnywhere.`nFor information on what the VDI is and how to use it, please read its IT Services page here: https://it.mst.edu/services/vdi/
+::@#vdipost::Sent the customer instructions to use the VDI.
 
 ::@#closenocontact::Closing ticket for lack of contact. Please submit a new request if the issue persists.
 ::@#closenocontactpost::Closed ticket for lack of contact.
 
 ::@#closerequest::Closing ticket at customer's request. Please feel free to submit a new request if the issue persists.
 ::@#closerequestpost::Closed ticket at customer's request.
-
-::@#in::Taking HD4 and R23
-::@#out::HD4 and R23 are free
 
 ::@#alum::Your account is going through what we call Maintenance Mode. This is the process of your account moving from active student to alumnus where you lose access to many things like the full Microsoft Office software suite. Maintenance Mode started for alumni this semester on 3/8. Once this is finished, you will be able to login to your email the same as before. Maintenance Mode normally takes 2-3 weeks to complete, so you should have access again soon.
 ::@#alumpost::Emailed the customer to tell them that their account is in maintenance mode, they're losing the Microsoft Office suite, and they'll be able to access their email again after the 2-3-week-long migration process.
