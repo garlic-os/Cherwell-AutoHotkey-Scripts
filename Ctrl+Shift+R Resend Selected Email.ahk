@@ -5,7 +5,7 @@ SendMode Input  ; Recommended for new scripts due to its superior speed and reli
 
 SENTINEL_TEXT_START := "We have a question or update regarding the above Incident:"
 SENTINEL_TEXT_END := "If you have questions, you may contact us by phone at"
-COMPOSE_EMAIL_SELECTOR := "WindowsForms10.STATIC.app.0.278ac52_r6_ad166"
+JOURNAL_NOTE_SENTINEL_TEXT := "Journal - Notes"
 
 Hotkey, IfWinActive, ahk_exe Trebuchet.App.exe
 Hotkey, ^+r, ResendSelectedEmail
@@ -15,6 +15,13 @@ Return
 ; Ctrl + Shift + R  |  Resend selected email
 ; Click the note containing the email you want to resend, then press this hotkey.
 ResendSelectedEmail:
+	; Only run when a journal note is selected.
+;	ControlGetFocus, focused_control, A
+;	ControlGetText, selected_control_text, %focused_control%, A
+;	if (not (InStr(selected_control_text, JOURNAL_NOTE_SENTINEL_TEXT) = 1)) {
+;		Return
+;	}
+
 	; Save current clipboard state (this script modifies the clipboard).
 	clipboard_previous_state := ClipboardAll
 	
@@ -47,13 +54,18 @@ ResendSelectedEmail:
 		; right before and right after the content we're looking for.
 		content := SubStr(clipboard, content_index_start, content_index_end - content_index_start)
 		content := Trim(StrReplace(content, "`r", ""), " `t`n")
-		
-		; Wait a moment before continuing.
-		; I don't know why this needs to be here but the script breaks without it
-		Sleep, 125
 
 		; Click the "compose an email for the customer" button.
-		ControlSend, %COMPOSE_EMAIL_SELECTOR%, {Enter}, A
+		WinGet, controls, ControlList, A
+		Loop, Parse, controls, `n
+		{
+			ControlGetText, text_contents, %A_LoopField%, A
+			ControlGetPos, x, y, , , %A_LoopField%, A
+			if (InStr(text_contents, "@") and x = 23) {
+				ControlSend, %A_LoopField%, {Enter}, A
+				Break
+			}
+		}
 		
 		; Wait for the email box to appear.
 		WinWaitActive, E-mail Message, , 10
