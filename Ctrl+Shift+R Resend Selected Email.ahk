@@ -2,12 +2,10 @@
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 #Warn  ; Enable warnings to assist with detecting common errors.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
-CoordMode, Mouse, Client  ; Recommended for consistency between OSes and themes.
-#UseHook
-SetDefaultMouseSpeed, 0
 
 SENTINEL_TEXT_START := "We have a question or update regarding the above Incident:"
 SENTINEL_TEXT_END := "If you have questions, you may contact us by phone at"
+COMPOSE_EMAIL_SELECTOR := "WindowsForms10.STATIC.app.0.278ac52_r6_ad166"
 
 Hotkey, IfWinActive, ahk_exe Trebuchet.App.exe
 Hotkey, ^+r, ResendSelectedEmail
@@ -50,15 +48,16 @@ ResendSelectedEmail:
 		content := SubStr(clipboard, content_index_start, content_index_end - content_index_start)
 		content := Trim(StrReplace(content, "`r", ""), " `t`n")
 		
-		; Wait for Shift to be released. I don't know why this has to be here
-		; but the script breaks without it
-		; KeyWait, Shift, L
+		; Wait a moment before continuing.
+		; I don't know why this needs to be here but the script breaks without it
+		Sleep, 125
 
 		; Click the "compose an email for the customer" button.
-		Click, 30, 304
+		ControlSend, %COMPOSE_EMAIL_SELECTOR%, {Enter}, A
 		
 		; Wait for the email box to appear.
 		WinWaitActive, E-mail Message, , 10
+		Sleep, 125  ; Another magic delay
 		if (ErrorLevel == 1) {
 			; Email box didn't show up after 10 seconds;
 			; play the Windows exclamation sound.
