@@ -16,7 +16,7 @@ Return
 
 ; Ctrl + Shift + R  |  Resend selected email
 ; Click the note containing the email you want to resend, then press this hotkey.
-ResendSelectedEmail::
+ResendSelectedEmail:
 	; Save current clipboard state (this script modifies the clipboard).
 	clipboard_previous_state := ClipboardAll
 	
