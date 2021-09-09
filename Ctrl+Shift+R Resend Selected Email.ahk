@@ -5,7 +5,7 @@ SendMode Input  ; Recommended for new scripts due to its superior speed and reli
 
 SENTINEL_TEXT_START := "We have a question or update regarding the above Incident:"
 SENTINEL_TEXT_END := "If you have questions, you may contact us by phone at"
-JOURNAL_NOTE_SENTINEL_TEXT := "Journal - Notes"
+; JOURNAL_NOTE_SENTINEL_TEXT := "Journal - Notes"
 
 Hotkey, IfWinActive, ahk_exe Trebuchet.App.exe
 Hotkey, ^+r, ResendSelectedEmail
@@ -30,18 +30,19 @@ ResendSelectedEmail:
 	Send, {Shift Up}
 	Send, {r Up}
 	
-	; (Releasing keys is async. I think)
+	; (Releasing keys is async. I think.)
 	KeyWait, Ctrl, L
 	KeyWait, Shift, L
 	KeyWait, r, L
 
 	; Select this note's textbox.
 	Send, {Enter}
-	Send, {Tab}
+	Send, {Down}
 	
 	; Copy the text.
 	Send, ^a
 	Send, ^c
+	Sleep, 50 ; magic delay
 	ClipWait  ; (Clipboard copy is async)
 	
 	; Extract the text sent in this email.
