@@ -1,12 +1,7 @@
 #SingleInstance, Force  ; Less annoying
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
-#Warn  ; Enable warnings to assist with detecting common errors.
-SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 
-; RegEx. Matches "We have a question or update regarding the above _______:"
-SENTINEL_TEXT_START := "iO)(We have a question or update regarding the above .+\:)"
-SENTINEL_TEXT_END := "If you have questions, you may contact us by phone at"
-; JOURNAL_NOTE_SENTINEL_TEXT := "Journal - Notes"
+SendMode, Input  ; Superior speed and reliability over the default send mode.
 
 Hotkey, IfWinActive, ahk_exe Trebuchet.App.exe
 Hotkey, ^+r, ResendSelectedEmail
@@ -16,13 +11,6 @@ Return
 ; Ctrl + Shift + R  |  Resend selected email
 ; Click the note containing the email you want to resend, then press this hotkey.
 ResendSelectedEmail:
-	; Only run when a journal note is selected.
-;	ControlGetFocus, focused_control, A
-;	ControlGetText, selected_control_text, %focused_control%, A
-;	if (not (InStr(selected_control_text, JOURNAL_NOTE_SENTINEL_TEXT) = 1)) {
-;		Return
-;	}
-
 	; Force release the hotkey keys so they don't screw anything up.
 	Send, {Ctrl Up}
 	Send, {Shift Up}
@@ -33,78 +21,48 @@ ResendSelectedEmail:
 	KeyWait, Shift, L
 	KeyWait, r, L
 
-	; Select this note's textbox.
-	Send, {Enter}
-	Send, {Down}
-	
-	; Copy the text.
-	Send, ^a
-	Send, ^c
-	Sleep, 50 ; magic delay
-	ClipWait  ; (Clipboard copy is async)
-	
-	; Extract the text sent in this email.
-	; (Note: index starts at 1; 0 means not found)
-	content_index_start := RegExMatch(Clipboard, SENTINEL_TEXT_START, regex_match)
-	content_index_start := content_index_start + regex_match.Len(0)
-	content_index_end := InStr(Clipboard, SENTINEL_TEXT_END)
-	
-	if (0 < content_index_start and content_index_start < content_index_end) {
-		; Get the text between two spots in the message that we know always appear
-		; right before and right after the content we're looking for.
-		content := SubStr(Clipboard, content_index_start, content_index_end - content_index_start)
-		
-		; Remove trailing spaces, tabs, and line breaks
-		content := Trim(StrReplace(content, "`r", ""), " `t`n")
-		
-		; Copy the content to the clipboard.
-		Clipboard := ""
-		Clipboard := content
-		Clipboard := Clipboard  ; Clear formatting
-		ClipWait
-
-		; Click the "compose an email for the customer" button.
-		WinGet, controls, ControlList, A
-		Loop, Parse, controls, `n
-		{
-			ControlGetText, text_contents, %A_LoopField%, A
-			ControlGetPos, x, y, , , %A_LoopField%, A
-			if (InStr(text_contents, "@") and x = 23) {
-				ControlSend, %A_LoopField%, {Enter}, A
-				Break
-			}
+	; Click the dropdown next to the "E-mail" button and choose "Reply to all"
+	; This took me hours to figure out and will probably break with the next Cherwell update
+	WinGet, controls, ControlListHwnd, A
+	Loop, Parse, controls, `n
+	{
+		ControlGetText, control_text, , ahk_id %A_LoopField%
+		if (control_text == "Main Toolbar") {
+			ControlSend, , {Tab}{Left}{Left}{Left}{Left}{Enter}a, ahk_id %A_LoopField%
+			Break
 		}
-		
-		; Wait for the email box to appear.
-		WinWaitActive, E-mail Message, , 10
-		Sleep, 125  ; Another magic delay
-		if (ErrorLevel == 1) {
-			; Email box didn't show up after 10 seconds;
-			; play the Windows exclamation sound.
-			SoundPlay, *48
-		}
-		
-		; Move cursor down to the message area in the email template.
-		Loop, 21 {
-			Send, {Down}
-		}
-		
-		; Paste the extracted content into the email body.
-		Send, ^v
-		
-		; Delete the two extra lines after the email.
-		Send, {Del}
-		Send, {Del}
-		
-		; Tab over the Send button (but leave actually clicking it up to the user).
-		Send, {Tab}
-		Send, {Tab}
-		
-		; Now, review the email and then you can press Enter to send it.
 	}
-	else {
-		; Email content not found;
+
+	; Wait for the email box to appear.
+	WinWaitActive, E-mail Message, , 10
+	Sleep, 125  ; Magic delay
+	if (ErrorLevel == 1) {
+		; Email box didn't show up after 10 seconds;
 		; play the Windows exclamation sound.
 		SoundPlay, *48
+		Return
 	}
+	
+	; Change the "Send via" field to "S&T IT Help Desk" because of course it sets it to "UM DoIT Services" by default
+	; This assumes the needed value is one above the current value. If that stops being consistently true, you could
+	; probably use ControlGetText to find out the value selected in this box.
+	ControlSend, WindowsForms10.COMBOBOX.app.0.1e4013b_r6_ad12, {Up}, A
+	
+	; Delete the reply information added to the top
+	Send, {Shift Down}
+	Loop, 9 {
+		Send, {Down}
+	}
+	Send, {Shift Up}
+	Send, {Backspace}
+
+	; Remove "RE: " from the subject line
+	Send, {Shift Down}{Tab}{Shift Up}{Home}{Delete}{Delete}{Delete}{Delete}
+	
+	; Delete the first email address in the Recipient field (because it's your own?? Why would I want to make myself a recipient, Cherwell?)
+	Send, {Shift Down}{Tab}{Tab}{Shift Up}{Home}^{Delete}
+	
+	; Highlight the Send button so you can just press Enter to send.
+	Send, {Tab}{Tab}{Tab}{Tab}{Tab}
+
 	Return
