@@ -1,6 +1,6 @@
 #SingleInstance, Force  ; Less annoying
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
-
+SetControlDelay -1  ; May improve reliability and reduce side effects.
 SendMode, Input  ; Superior speed and reliability over the default send mode.
 
 Hotkey, IfWinActive, ahk_exe Trebuchet.App.exe
