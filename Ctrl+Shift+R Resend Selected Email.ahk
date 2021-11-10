@@ -49,18 +49,16 @@ ResendSelectedEmail:
 	ControlSend, WindowsForms10.COMBOBOX.app.0.1e4013b_r6_ad12, {Up}, A
 	
 	; Delete the reply information added to the top
-	Send, {Shift Down}
 	Loop, 9 {
-		Send, {Down}
+		Send, +{Down}
 	}
-	Send, {Shift Up}
 	Send, {Backspace}
 
 	; Remove "RE: " from the subject line
-	Send, {Shift Down}{Tab}{Shift Up}{Home}{Delete}{Delete}{Delete}{Delete}
+	Send, +{Tab}{Home}{Delete}{Delete}{Delete}{Delete}
 	
 	; Delete the first email address in the Recipient field (because it's your own?? Why would I want to make myself a recipient, Cherwell?)
-	Send, {Shift Down}{Tab}{Tab}{Shift Up}{Home}^{Delete}
+	Send, +{Tab}+{Tab}{Home}^{Delete}
 	
 	; Highlight the Send button so you can just press Enter to send.
 	Send, {Tab}{Tab}{Tab}{Tab}{Tab}
