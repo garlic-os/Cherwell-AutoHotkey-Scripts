@@ -11,15 +11,10 @@ Return
 ; Ctrl + Shift + R  |  Resend selected email
 ; Click the note containing the email you want to resend, then press this hotkey.
 ResendSelectedEmail:
-	; Force release the hotkey keys so they don't screw anything up.
-	Send, {Ctrl Up}
-	Send, {Shift Up}
-	Send, {r Up}
-	
-	; (Releasing keys is async. I think.)
+	; Wait for the user to release the modifier keys; these keys being pressed
+	; while the script runs will screw up the menu navigation.
 	KeyWait, Ctrl, L
 	KeyWait, Shift, L
-	KeyWait, r, L
 
 	; Click the dropdown next to the "E-mail" button and choose "Reply to all"
 	; This took me hours to figure out and will probably break with the next Cherwell update
